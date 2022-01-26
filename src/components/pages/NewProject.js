@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import { Axios } from '../../services/configAxios'
 import ProjectForm from '../project/ProjectForm'
 import styles from './NewProject.module.css'
 
@@ -10,16 +11,11 @@ function NewProject(){
         // initialize cost and services
         project.cost = 0
         project.services = []
-
-        fetch('http://localhost:5000/projects', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(project),
-          })
-            .then((resp) => resp.json())
-            .then((data) => {navigate('/projects', {state: {message:'Projeto criado com sucesso!'}})
+          
+        Axios.post('/projects', project)
+        .then(console.log("deu certo"))
+        .then((response) => {
+          navigate('/projects', {state: {message:'Projeto criado com sucesso!'}})
         })
     }
     

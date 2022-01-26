@@ -1,4 +1,5 @@
 import {parse, v4 as uuidv4} from 'uuid'
+import { Axios } from '../../services/configAxios'
 
 import styles from './Project.module.css'
 
@@ -23,23 +24,15 @@ function Project(){
     const [type, setType] = useState()
 
     useEffect(() => {
-        // Para ver o loading
-        setTimeout(
-          () =>
-            fetch(`http://localhost:5000/projects/${id}`, {
-              method: 'GET',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            })
-              .then((resp) => resp.json())
-              .then((data) => {
-                setProject(data)
-                setServices(data.services)
-              }),
-          0,
-        )
-      }, [id])
+      // Para ver o loading
+      setTimeout(() => {
+        Axios.get(`/projects/${id}`)
+        .then((response) => {
+          setProject(response.data)
+          setServices(response.data.services)
+        })
+      }, 0) 
+    },[id])
 
     function editPost(project){
         setMessage('')
@@ -50,20 +43,14 @@ function Project(){
             setType('error')
             return false
         }
-
-        fetch(`http://localhost:5000/projects/${project.id}`,{
-            method: 'PATCH',
-            headers: { 'Content-Type' : 'application/json' },
-            body: JSON.stringify(project)
-        })
-        .then(resp => resp.json())
-        .then((data) => {
-            setProject(data)
+        
+        Axios.patch(`/projects/${project.id}`)
+        .then((response) => {
+            setProject(response.data)
             setShowProjectForm(false)
-            setMessage('Projeto atualizado')
+            setMessage('Projeto Atualizado')
             setType('success')
         })
-        .catch(err => console.log(err))
     }
 
     function createService(project) {
